@@ -51,7 +51,7 @@ public class customerInterface1 extends JFrame {
         
         user = "root";
         pass = "";
-        dbName = "electroarena";
+        dbName = "electro";
         ob.setConnection(dbName, user, pass);
         
        // Box b1 = Box.createHorizontalBox();
@@ -112,7 +112,7 @@ public class customerInterface1 extends JFrame {
         searchCombo.removeAllItems();
         searchCombo.addItem("SEARCH BY");
         searchCombo.addItem("Brand");
-        searchCombo.addItem("Product");
+        searchCombo.addItem("Catagory");
         
         
 //        c1.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
@@ -275,14 +275,15 @@ public class customerInterface1 extends JFrame {
         menuPanel.setLayout(null);
 
         searchText.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
-        searchText.setBorder(null);
+        searchText.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         searchText.setDragEnabled(true);
         searchText.setOpaque(false);
         searchText.setSelectedTextColor(new java.awt.Color(102, 102, 102));
         menuPanel.add(searchText);
         searchText.setBounds(230, 50, 480, 30);
 
-        searchBtn.setBorder(null);
+        searchBtn.setText("SEARCH");
+        searchBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         searchBtn.setBorderPainted(false);
         searchBtn.setContentAreaFilled(false);
         searchBtn.setFocusPainted(false);
@@ -295,9 +296,8 @@ public class customerInterface1 extends JFrame {
         searchBtn.setBounds(720, 40, 70, 40);
 
         jLabel1.setBackground(new java.awt.Color(255, 51, 102));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dbproject/search.jpg"))); // NOI18N
         menuPanel.add(jLabel1);
-        jLabel1.setBounds(220, 40, 582, 45);
+        jLabel1.setBounds(220, 40, 0, 45);
 
         jPanel2.setBackground(new java.awt.Color(242, 242, 242));
 
@@ -316,6 +316,11 @@ public class customerInterface1 extends JFrame {
         jPanel2.setBounds(0, 0, 1206, 25);
 
         searchCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        searchCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchComboActionPerformed(evt);
+            }
+        });
         menuPanel.add(searchCombo);
         searchCombo.setBounds(90, 40, 120, 40);
 
@@ -351,7 +356,7 @@ public class customerInterface1 extends JFrame {
                     .addGroup(contentPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(catagoryList, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(280, 1001, Short.MAX_VALUE))))
+                        .addGap(280, 948, Short.MAX_VALUE))))
         );
         contentPanelLayout.setVerticalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -493,10 +498,14 @@ public class customerInterface1 extends JFrame {
         // TODO add your handling code here:
         searchInput = searchText.getText();
          searchBy = searchCombo.getSelectedItem().toString();
-         query = "SELECT product_name, catagory_name, color, price, brand_name from product where "+searchBy+"_name = '"+searchInput+"'";
+         query = "SELECT product_name, color, price from product where "+searchBy+"_name = '"+searchInput+"'";
          System.out.println(query);
          ob.searchQuery(query);
     }//GEN-LAST:event_searchBtnActionPerformed
+
+    private void searchComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchComboActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
