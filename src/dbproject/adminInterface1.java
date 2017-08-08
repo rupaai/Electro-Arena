@@ -10,6 +10,7 @@ import javax.swing.JTextField;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import net.proteanit.sql.DbUtils;
 
 /*
@@ -25,24 +26,28 @@ import net.proteanit.sql.DbUtils;
 public class adminInterface1 extends javax.swing.JFrame {
    
     DatabaseHandler ob = new DatabaseHandler();
-    int click = 1, col_no;
-    private String user, pass, dbName, tbName;
+    int click = 1, col_no, selectedData;
+    int clicku = 1;
+    private String user, pass, dbName, tbName, query;
+    private String deleteVal, col_name, updateVal;
     private String[] col_names;
     JLabel[] jl;
     JTextField[] jt;
+    TableModel model = null;
      String[] val;
     public adminInterface1() {
         initComponents();
         
         user = "root";
         pass = "";
-        dbName = "electroarena2";
+        dbName = "electro";
         ob.setConnection(dbName, user, pass);
         
         listPanel.setVisible(false);
         scroller.setVisible(false);
-        columns.setVisible(false);
+        //columns.setVisible(false);
         option.setVisible(false);
+        jScrollPane1.setVisible(false);
     }
 
     /**
@@ -137,6 +142,11 @@ public class adminInterface1 extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        dbTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dbTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(dbTable);
 
         listPanel.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 720, 430));
@@ -310,15 +320,17 @@ public class adminInterface1 extends javax.swing.JFrame {
         Object source = evt.getSource();
         
         if(source == insertBtn){
-            if(click%2!=0){
-                jScrollPane1.setVisible(false);
+            if(clicku%2!=0){
+                //jScrollPane1.setVisible(false);
+                listItems.setVisible(true);
                 listPanel.setVisible(true);
                 //dbTable.setVisible(false);
             }
-            else if(click%2==0){
+            else if(clicku%2==0){
+                listItems.setVisible(true);
                 listPanel.setVisible(false);
             }
-            click++;
+            clicku++;
         }
         jButton1.setText("INSERT");
     }//GEN-LAST:event_insertBtnActionPerformed
@@ -326,29 +338,33 @@ public class adminInterface1 extends javax.swing.JFrame {
     private void updateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateBtnActionPerformed
         Object source = evt.getSource();
         if(source == updateBtn){
-            if(click%2!=0){
+            if(clicku%2!=0){
                // dbTable.setVisible(false);
                 listPanel.setVisible(true);
-                jScrollPane1.setVisible(false);
+                listItems.setVisible(true);
             }
-            else if(click%2==0){
+            else if(clicku%2==0){
+                listItems.setVisible(false);
                 listPanel.setVisible(false);
             }
-            click++;
+            clicku++;
         }
         jButton1.setText("UPDATE");
     }//GEN-LAST:event_updateBtnActionPerformed
 
     private void prodBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prodBtnActionPerformed
         ResultSet result = ob.testQuery("product");
-        //col_no = 5;
+        listItems.setVisible(false);
+        option.setVisible(true);
          jScrollPane1.setVisible(true);
          dbTable.setModel(DbUtils.resultSetToTableModel(result));
-         col_no = dbTable.getColumnCount();
+         if(clicku%2==0){
+            
+             col_no = dbTable.getColumnCount();
          System.out.println(col_no);
          col_names = new String[col_no + 1];
          JTableHeader th = dbTable.getTableHeader();
-
+         System.out.println(clicku);
         TableColumnModel tcm = th.getColumnModel();
 
         for (int x = 0, y = tcm.getColumnCount(); x < y; x++) {
@@ -361,7 +377,7 @@ public class adminInterface1 extends javax.swing.JFrame {
         int j = 10;
         scroller.setVisible(true);
         columns.setVisible(true);
-        option.setVisible(true);
+        
         System.out.println(col_names[2]+" "+col_no);
         //catagoryList.setVisible(true);
                  for(int i = 0; i<col_no; i++){
@@ -388,6 +404,13 @@ public class adminInterface1 extends javax.swing.JFrame {
             //ct[i].setFont(font);
             j += 30;
                 }
+         }
+         else{
+             
+             option.remove(scroller);
+             
+         }
+         
     }//GEN-LAST:event_prodBtnActionPerformed
 
     private void brandBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_brandBtnActionPerformed
@@ -395,26 +418,32 @@ public class adminInterface1 extends javax.swing.JFrame {
         ResultSet result = ob.testQuery(tbName);
         listItems.setVisible(false);
         jScrollPane1.setVisible(true);
-            dbTable.setModel(DbUtils.resultSetToTableModel(result));
-         col_no = dbTable.getColumnCount();
-         System.out.println(col_no);
-         JTableHeader th = dbTable.getTableHeader();
-        col_names = new String[col_no + 1];
-        TableColumnModel tcm = th.getColumnModel();
-        scroller.setVisible(true);
-        columns.setVisible(true);
+        //option.setVisible(false);
         option.setVisible(true);
+            dbTable.setModel(DbUtils.resultSetToTableModel(result));
+              if(clicku%2==0){
+                  
+             col_no = dbTable.getColumnCount();
+         System.out.println(col_no);
+         col_names = new String[col_no + 1];
+         JTableHeader th = dbTable.getTableHeader();
+         System.out.println(clicku);
+        TableColumnModel tcm = th.getColumnModel();
+
         for (int x = 0, y = tcm.getColumnCount(); x < y; x++) {
             TableColumn tc = tcm.getColumn(x);
             col_names[x] = tc.getHeaderValue().toString();
         }
-        JTextField[] jt = new JTextField[col_no + 1];
-        JLabel[] jl = new JLabel[col_no + 1];
-        String[] val = new String[col_no + 1];
+        jt = new JTextField[col_no + 1];
+        jl = new JLabel[col_no + 1];
+       
         int j = 10;
+        scroller.setVisible(true);
+        columns.setVisible(true);
+        
         System.out.println(col_names[2]+" "+col_no);
         //catagoryList.setVisible(true);
-                for(int i = 0; i<col_no; i++){
+                 for(int i = 0; i<col_no; i++){
             System.out.println("fdsfas");
             jt[i] = new JTextField();
             jl[i] = new JLabel();
@@ -438,7 +467,13 @@ public class adminInterface1 extends javax.swing.JFrame {
             //ct[i].setFont(font);
             j += 30;
                 }
-                //tbName = null;
+         }
+              else{
+             
+             option.remove(scroller);
+             
+         }
+         
     }//GEN-LAST:event_brandBtnActionPerformed
 
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
@@ -447,9 +482,10 @@ public class adminInterface1 extends javax.swing.JFrame {
             if(click%2!=0){
                 //dbTable.setVisible(false);
                 listPanel.setVisible(true);
-                jScrollPane1.setVisible(false);
+                listItems.setVisible(true);
             }
             else if(click%2==0){
+                listItems.setVisible(false);
                 listPanel.setVisible(false);
             }
             click++;
@@ -462,26 +498,31 @@ public class adminInterface1 extends javax.swing.JFrame {
         ResultSet result = ob.testQuery(tbName);
         listItems.setVisible(false);
         jScrollPane1.setVisible(true);
-            dbTable.setModel(DbUtils.resultSetToTableModel(result));
-         col_no = dbTable.getColumnCount();
-         System.out.println(col_no);
-         JTableHeader th = dbTable.getTableHeader();
-        col_names = new String[col_no + 1];
-        TableColumnModel tcm = th.getColumnModel();
-        scroller.setVisible(true);
-        columns.setVisible(true);
         option.setVisible(true);
+
+            dbTable.setModel(DbUtils.resultSetToTableModel(result));
+         if(clicku%2==0){
+                 //jScrollPane1.setVisible(true);
+             col_no = dbTable.getColumnCount();
+         System.out.println(col_no);
+         col_names = new String[col_no + 1];
+         JTableHeader th = dbTable.getTableHeader();
+         System.out.println(clicku);
+        TableColumnModel tcm = th.getColumnModel();
+
         for (int x = 0, y = tcm.getColumnCount(); x < y; x++) {
             TableColumn tc = tcm.getColumn(x);
             col_names[x] = tc.getHeaderValue().toString();
         }
-        JTextField[] jt = new JTextField[col_no + 1];
-        JLabel[] jl = new JLabel[col_no + 1];
-        String[] val = new String[col_no + 1];
+        jt = new JTextField[col_no + 1];
+        jl = new JLabel[col_no + 1];
+       
         int j = 10;
-        System.out.println(col_names[2]+" "+col_no);
+        scroller.setVisible(true);
+        columns.setVisible(true);
+                System.out.println(col_names[2]+" "+col_no);
         //catagoryList.setVisible(true);
-                for(int i = 0; i<col_no; i++){
+                 for(int i = 0; i<col_no; i++){
             System.out.println("fdsfas");
             jt[i] = new JTextField();
             jl[i] = new JLabel();
@@ -505,7 +546,13 @@ public class adminInterface1 extends javax.swing.JFrame {
             //ct[i].setFont(font);
             j += 30;
                 }
-                //tbName = null;
+         }
+         else{
+             
+             option.remove(scroller);
+             
+         }
+         
     }//GEN-LAST:event_catBtnActionPerformed
 
     private void userBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userBtnActionPerformed
@@ -513,27 +560,32 @@ public class adminInterface1 extends javax.swing.JFrame {
         ResultSet result = ob.testQuery(tbName);
         listItems.setVisible(false);
         jScrollPane1.setVisible(true);
-            dbTable.setModel(DbUtils.resultSetToTableModel(result));
-         col_no = dbTable.getColumnCount();
-         System.out.println(col_no);
-         JTableHeader th = dbTable.getTableHeader();
-        col_names = new String[col_no + 1];
-        TableColumnModel tcm = th.getColumnModel();
-        scroller.setVisible(true);
-        columns.setVisible(true);
         option.setVisible(true);
+            dbTable.setModel(DbUtils.resultSetToTableModel(result));
+         if(clicku%2==0){
+                  //jScrollPane1.setVisible(true);
+             col_no = dbTable.getColumnCount();
+         System.out.println(col_no);
+         col_names = new String[col_no + 1];
+         JTableHeader th = dbTable.getTableHeader();
+         System.out.println(clicku);
+        TableColumnModel tcm = th.getColumnModel();
+
         for (int x = 0, y = tcm.getColumnCount(); x < y; x++) {
             TableColumn tc = tcm.getColumn(x);
             col_names[x] = tc.getHeaderValue().toString();
         }
-        JTextField[] jt = new JTextField[col_no + 1];
-        JLabel[] jl = new JLabel[col_no + 1];
-        String[] val = new String[col_no + 1];
+        jt = new JTextField[col_no + 1];
+        jl = new JLabel[col_no + 1];
+       
         int j = 10;
+        scroller.setVisible(true);
+        columns.setVisible(true);
+        
         System.out.println(col_names[2]+" "+col_no);
         //catagoryList.setVisible(true);
-                for(int i = 0; i<col_no; i++){
-            System.out.println("fdsfas");
+                 for(int i = 0; i<col_no; i++){
+            //System.out.println("fdsfas");
             jt[i] = new JTextField();
             jl[i] = new JLabel();
             jl[i].setText(col_names[i]);
@@ -556,6 +608,13 @@ public class adminInterface1 extends javax.swing.JFrame {
             //ct[i].setFont(font);
             j += 30;
                 }
+         }
+         else{
+             
+             option.remove(scroller);
+             
+         }
+         
     }//GEN-LAST:event_userBtnActionPerformed
 
     
@@ -567,12 +626,57 @@ public class adminInterface1 extends javax.swing.JFrame {
                     val[i] = jt[i].getText();
                     System.out.println(jt[i].getText());
                 }
-           if(tbName == "brand"){
-               ob.insertData(tbName, val);
-           }
-         
+          ob.insertData(tbName, val);
+        }
+        else if(jButton1.getText()=="DELETE"){
+            if (model != null) {
+            deleteVal = model.getValueAt(selectedData, 0).toString();
+
+            //table_Name = dbTable_Name.getSelectedItem().toString();
+
+            col_name = model.getColumnName(0);
+
+            ob.deleteData(tbName, col_name, deleteVal);
+        }
+        }
+        else if(jButton1.getText()== "UPDATE"){
+            query = null;
+        if (model != null) {
+            updateVal = model.getValueAt(selectedData, 0).toString();
+            //table_Name = dbTable_Name.getSelectedItem().toString();
+            col_no = dbTable.getColumnCount();
+            col_names = new String[col_no + 1];
+            query = "UPDATE " + tbName + " SET ";
+            
+            for (int j = 0; j <= col_no - 1; j++) {
+                query += model.getColumnName(j) + " = ";
+                query += "?";
+                if (j != col_no - 1) {
+                    query += ",";
+                }
+            }
+            
+            query += " WHERE ";
+            query += model.getColumnName(0);
+            query += " = '" + updateVal + "'";
+            System.out.println(query);
+            JTableHeader th = dbTable.getTableHeader();
+
+        TableColumnModel tcm = th.getColumnModel();
+
+        for (int x = 0, y = tcm.getColumnCount(); x < y; x++) {
+            TableColumn tc = tcm.getColumn(x);
+            col_names[x] = tc.getHeaderValue().toString();
+        }
+        }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void dbTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dbTableMouseClicked
+        selectedData = dbTable.getSelectedRow();
+
+        model = dbTable.getModel();
+    }//GEN-LAST:event_dbTableMouseClicked
 
     /**
      * @param args the command line arguments
