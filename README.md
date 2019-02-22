@@ -5,3 +5,5 @@ A JAVA based Desktop app for electronic gadget shop.
 ## Features:
 * Search products
 * Bookmark products
+* Buy/Sell Products.
+* Update Products.
